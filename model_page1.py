@@ -124,8 +124,63 @@ if not matches.empty:
             if not model_team_df.empty:
                 st.dataframe(model_team_df[['player', 'role']])
         
-        if not dream11_team_df.empty and not model_team_df.empty:
-            accuracy, correct_predictions = calculate_accuracy(dream11_team_df, model_team_df)
-            st.write(f"Model Accuracy: {accuracy:.2%} ({correct_predictions}/11)")
+            if not dream11_team_df.empty and not model_team_df.empty:
+                accuracy, correct_predictions = calculate_accuracy(dream11_team_df, model_team_df)
+                st.write(f"Model Accuracy: {accuracy:.2%} ({correct_predictions}/11)")
 else:
     st.write('No matches found for the selected criteria.')
+
+
+st.empty()
+st.markdown('---')
+st.empty()
+
+roles_df = pd.read_csv('coded-roles-output (1).csv')
+
+# Define the teams with player names
+team_1 = {'Mumbai Indians': ['Ishan Kishan', 'RG Sharma', 'Naman Dhir', 'SA Yadav', 'Tilak Varma', 'HH Pandya', 'TH David', 'PP Chawla', 'JJ Bumrah', 'N Thushara', 'N Wadhera', 'SZ Mulani']}
+team_2 = {'Kolkata Knight Riders': ['PD Salt', 'SP Narine', 'A Raghuvanshi', 'SS Iyer', 'VR Iyer', 'RK Singh', 'AD Russell', 'Ramandeep Singh', 'MA Starc', 'CV Varun', 'Harshit Rana', 'VG Arora']}
+
+# Convert team lists to DataFrame
+team_1_df = pd.DataFrame({'player': team_1['Mumbai Indians']})
+team_2_df = pd.DataFrame({'player': team_2['Kolkata Knight Riders']})
+
+# Merge the team dataframes with the roles dataframe
+team_1_df = team_1_df.merge(roles_df, left_on='player', right_on='name', how='left').drop(columns=['name'])
+team_2_df = team_2_df.merge(roles_df, left_on='player', right_on='name', how='left').drop(columns=['name'])
+
+# Load the predicted team data
+predicted_team_df = pd.read_excel('/Users/madhvendrasingh/Downloads/Work/MLPR/endsem_project/mi-vs-kkr-predicted-team.xlsx')
+predicted_team_df = predicted_team_df.merge(roles_df, left_on='Player Name', right_on='name', how='left').drop(columns=['name'])
+
+# Apply the team finding function from combined teams dictionary
+teams = {**team_1, **team_2}  # Combining both dictionaries
+predicted_team_df['Team'] = predicted_team_df['Player Name'].apply(lambda player: next((team for team, players in teams.items() if player in players), "Team not found"))
+
+# Limit to the top 11 players
+predicted_team_df = predicted_team_df.head(11)
+
+# Setting a new index starting from 1
+predicted_team_df['Index'] = range(1, len(predicted_team_df) + 1)
+predicted_team_df.set_index('Index', inplace=True)
+
+# Display in Streamlit
+st.title('Today\'s IPL Match Team')
+
+# Display static teams
+col1, col2 = st.columns(2)
+with col1:
+    st.header('Mumbai Indians')
+    st.dataframe(team_1_df.set_index(pd.Index(range(1, len(team_1_df) + 1))))
+
+with col2:
+    st.header('Kolkata Knight Riders')
+    st.dataframe(team_2_df.set_index(pd.Index(range(1, len(team_2_df) + 1))))
+
+# Display predicted team
+st.header('LSTM Predicted Top 11 Players for Today\'s Match')
+st.dataframe(predicted_team_df[['Player Name', 'role', 'Team']])
+
+st.markdown("---")  # Visual separator
+st.empty()  # Additional spacing
+
