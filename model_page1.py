@@ -150,7 +150,7 @@ team_1_df = team_1_df.merge(roles_df, left_on='player', right_on='name', how='le
 team_2_df = team_2_df.merge(roles_df, left_on='player', right_on='name', how='left').drop(columns=['name'])
 
 # Load the predicted team data
-predicted_team_df = pd.read_excel('mi-vs-kkr-predicted-team.xlsx')
+predicted_team_df = pd.read_csv('mi-vs-kkr-predicted-team(new).csv')
 predicted_team_df = predicted_team_df.merge(roles_df, left_on='Player Name', right_on='name', how='left').drop(columns=['name'])
 
 # Apply the team finding function from combined teams dictionary
