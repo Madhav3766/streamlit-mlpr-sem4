@@ -3,11 +3,11 @@ import pandas as pd
 import json
 
 # Load the datasets
-matches_df = pd.read_csv('/Users/madhvendrasingh/Downloads/Work/MLPR/endsem_project/updated-matches-dataset.csv')
-dream11_teams_df = pd.read_csv('/Users/madhvendrasingh/Downloads/Work/MLPR/endsem_project/dream11_teams_streamlit.csv')
-all_players_df = pd.read_csv('/Users/madhvendrasingh/Downloads/Work/MLPR/endsem_project/dream11_all_players_streamlit.csv')
-player_roles_df = pd.read_csv('/Users/madhvendrasingh/Downloads/Work/MLPR/endsem_project/coded-roles-output (1).csv')
-model_teams_df = pd.read_csv('/Users/madhvendrasingh/Downloads/Work/MLPR/endsem_project/output_file-maddy.csv')  # Load the model-predicted Dream11 teams
+matches_df = pd.read_csv('updated-matches-dataset.csv')
+dream11_teams_df = pd.read_csv('dream11_teams_streamlit.csv')
+all_players_df = pd.read_csv('dream11_all_players_streamlit.csv')
+player_roles_df = pd.read_csv('coded-roles-output (1).csv')
+model_teams_df = pd.read_csv('output_file-maddy.csv')  # Load the model-predicted Dream11 teams
 
 def get_matches(season, team1, team2):
     return matches_df[(matches_df['Season'] == season) &
